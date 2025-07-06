@@ -13,14 +13,17 @@ type application struct {
 }
 
 func main() {
-	f, err := os.OpenFile("/tmp/info.log", os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// f, err := os.OpenFile("/tmp/info.log", os.O_RDWR|os.O_CREATE, 0666)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	defer f.Close()
+	// defer f.Close()
 
-	infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	flag.Parse()
+
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile|log.LUTC)
 
 	app := &application {
@@ -34,26 +37,19 @@ func main() {
 	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	flag.Parse()
-	
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	infoLog.Printf("Starting a new Server on %s", *addr)
+	
 	
 	srv := &http.Server {
 		Addr: *addr,
 		ErrorLog: errorLog,
-		Handler: mux,
+		//Handler: mux,
+		Handler: app.routes(),
 	}
 	
 	infoLog.Printf("Starting server on %s", *addr)
 	
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	//err := http.ListenAndServe(*addr, mux)
-
-	if err != nil {
-		errorLog.Fatal(err)
-	}
+	errorLog.Fatal(err)
 }
