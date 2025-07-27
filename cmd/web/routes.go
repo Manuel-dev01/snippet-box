@@ -1,15 +1,33 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
 
-func (app *application) routes() *http.ServeMux{
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet", app.showSnippet)
-	mux.HandleFunc("/snippet/create", app.createSnippet)
+	"github.com/bmizerany/pat"
+	"github.com/justinas/alice"
+	//go get github.com/justinas/alice
+)
 
-	fileServer := http.FileServer(http.Dir("./ui/static"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+func (app *application) routes() http.Handler {
+	
+	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
+	
+	mux := pat.New()
+	mux.Get("/", http.HandlerFunc(app.home))
+	mux.Get("/snippet/create", http.HandlerFunc(app.createSnippetForm))
+	mux.Post("/snippet/create", http.HandlerFunc(app.createSnippet))
+	mux.Get("/snippet/:id", http.HandlerFunc(app.showSnippet))
 
-	return mux
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	mux.Get("/static/", http.StripPrefix("/static", fileServer))
+	// mux := http.NewServeMux()
+	// mux.HandleFunc("/", app.home)
+	// mux.HandleFunc("/snippet", app.showSnippet)
+	// mux.HandleFunc("/snippet/create", app.createSnippet)
+
+	// fileServer := http.FileServer(http.Dir("./ui/static"))
+	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+
+	return standardMiddleware.Then(mux)
+	// return app.recoverPanic(app.logRequest(secureHeaders(mux)))
 }

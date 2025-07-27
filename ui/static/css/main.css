@@ -139,10 +139,11 @@ table {
   border-collapse: collapse;
   margin-top: 10px;
   background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1)
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
+th,
+td {
   padding: 10px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -179,7 +180,7 @@ p {
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 nav {
@@ -201,4 +202,67 @@ footer {
   text-align: center;
   color: #888;
   font-size: 0.9em;
+}
+
+form {
+  max-width: 80%;
+  margin: 20px auto;
+}
+
+div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+input[type="text"] {
+  width: 70%;
+  font-size: 1rem;
+  height: 1.5rem;
+}
+
+input[type="text"] textarea {
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 2px solid black;
+}
+
+textarea {
+  min-height: 100px;
+  width: 70%;
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+}
+
+input[type="radio"] + label {
+  display: inline-block;
+  margin-right: 15px;
+  font-weight: normal;
+}
+
+input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: #4ca049;
 }
