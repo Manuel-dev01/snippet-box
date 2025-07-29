@@ -4,17 +4,31 @@
   <head>
     <meta charset="utf-8" />
     <title>{{template "title" .}} - Snippetbox</title>
-    <link rel='stylesheet' href='/static/css/main.css'/>
+    <link rel='stylesheet' href='/static/css/main.css'>
   </head>
   <body>
     <header>
       <h1><a href="/">Snippetbox</a></h1>
     </header>
-    <nav>
-      <a href="/">Home</a>
-      <a href='/snippet/create'>Create snippet</a>
-    </nav>
     <section>
+      <nav>
+        <div>
+          <a href='/'>Home</a>
+          <a href='/snippet/create'>Create snippet</a>
+        </div>
+        <div>
+          <a href='/user/signup'>Signup</a>
+          <a href='/user/login'>Login</a>
+          <form action='/user/logout' method='POST'>
+            <button>Logout</button>
+          </form>
+        </div>
+      </nav>
+    </section>
+    <section>
+      {{with .Flash}}
+      <div class='flash '>{{.}}</div>
+      {{end}}
       {{template "body" .}}
     </section>
     {{template "footer" .}}

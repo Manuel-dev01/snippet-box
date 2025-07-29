@@ -21,7 +21,7 @@
         </div>
         <div>
             <label>Delete in:</label>
-            {{with .Errors.Get "expires"}}
+            {{with .Errors}}
                 <label class='error'>{{.}}</label>
             {{end}}
             {{$exp := or (.Get "expires") "365"}}

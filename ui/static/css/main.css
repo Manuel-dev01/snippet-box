@@ -12,6 +12,7 @@ header {
   padding: 20px 0;
   border-bottom: 1px solid #eee;
   text-align: center;
+  border-bottom: 2px solid black;
 }
 
 header h1 a {
@@ -263,6 +264,45 @@ input[type="submit"] {
   transition: background-color 0.3s ease;
 }
 
+input[type="email"],
+input[type="password"] {
+  width: 70%;
+  font-size: 1rem;
+  height: 1.5rem;
+}
+
 input[type="submit"]:hover {
   background-color: #4ca049;
+}
+
+.flash {
+  background-color: #555;
+  color: whitesmoke;
+  text-align: center;
+}
+
+section {
+  border: 2px solid black;
+}
+
+nav {
+  width: 75%;
+  margin: 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+nav div:nth-of-type(2) form {
+  display: inline;
+}
+
+nav div:nth-of-type(2) button {
+  padding: 0.8rem 1rem;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 0.6rem;
+  color: whitesmoke;
+  background-color: #007bff;
 }

@@ -1,23 +1,28 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Manuel-dev01/snippet-box/pkg/models/mysql"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golangcollege/sessions"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog *log.Logger
+	session *sessions.Session
 	snippets *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	users 	  *mysql.UserModel
 }
 
 func main() {
@@ -30,6 +35,8 @@ func main() {
 
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL database")
+	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret Key")
+	
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -48,11 +55,24 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// Use the sessions.New() func to initialize a new session manager
+	session := sessions.New([]byte(*secret))
+	session.Lifetime = 12 * time.Hour
+
 	app := &application {
 		errorLog: errorLog,
 		infoLog: infoLog,
+		session: session,
 		snippets: &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
+		users: 	  &mysql.UserModel{DB: db},
+	}
+
+	// initialize a tls.Config struct to hold the non-default TLS settings we want the
+	// server to use
+	tlsConfig := &tls.Config {
+		PreferServerCipherSuites: true,
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
 	}
 	
 	srv := &http.Server {
@@ -60,11 +80,18 @@ func main() {
 		ErrorLog: errorLog,
 		//Handler: mux,
 		Handler: app.routes(),
+		TLSConfig: tlsConfig,
+
+		//Add Idle, Read and Write timeouts to the server
+		IdleTimeout: time.Minute,
+		ReadTimeout: 5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	
 	infoLog.Printf("Starting server on %s", *addr)
 	
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	//err = srv.ListenAndServe()
 	//err := http.ListenAndServe(*addr, mux)
 	errorLog.Fatal(err)
 }
