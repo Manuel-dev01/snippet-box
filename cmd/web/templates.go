@@ -10,6 +10,8 @@ import (
 )
 
 type templateData struct {
+	AuthenticatedUser *models.User
+	CSRFToken 	string
 	CurrentYear int
 	Flash string
 	Form *forms.Form
@@ -18,7 +20,13 @@ type templateData struct {
 }
 
 func humanDate(t time.Time) string {
-	return t.Format("02 Jan 2006 at 15:04")
+	// Return the empty string if time has the zero value
+	if t.IsZero() {
+		return ""
+	}
+
+	// convert the time to utc before formatting
+	return t.UTC().Format("02 Jan 2006 at 15:04")
 }
 
 var functions = template.FuncMap{

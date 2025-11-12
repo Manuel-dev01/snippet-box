@@ -16,6 +16,9 @@ import (
 	"github.com/golangcollege/sessions"
 )
 
+type contextKey string
+var contextKeyUser = contextKey("user")
+
 type application struct {
 	errorLog *log.Logger
 	infoLog *log.Logger
@@ -58,6 +61,8 @@ func main() {
 	// Use the sessions.New() func to initialize a new session manager
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+	session.SameSite = http.SameSiteStrictMode
 
 	app := &application {
 		errorLog: errorLog,
